@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Смеси (Рецептуры){% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Смеси и рецептуры</h2>
+
+{% if current_user.is_chief() %}
+<a href="{{ url_for('add_recipe') }}" class="btn btn-success mb-3">Добавить рецепт</a>
+{% endif %}
+
+<div class="accordion" id="recipesAccordion">
+    {% for recipe in recipes %}
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingRecipe{{ recipe.id }}">
+            <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecipe{{ recipe.id }}">
+                <strong>{{ recipe.product_type }}</strong>
+                <span class="badge bg-info ms-2">{{ recipe.total_weight }}г на единицу</span>
+            </button>
+        </h2>
+        <div id="collapseRecipe{{ recipe.id }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}">
+            <div class="accordion-body">
+                <table class="table table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Ингредиент</th>
+                            <th>Грамм на 1 шт.</th>
+                            <th>Процент от массы</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ing in recipe.ingredients %}
+                        <tr>
+                            <td>{{ ing.ingredient_name }}</td>
+                            <td>{{ ing.amount_grams }}г</td>
+                            <td>{{ ing.percentage }}%</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if current_user.is_chief() %}
+                <a href="{{ url_for('delete_recipe', recipe_id=recipe.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить рецепт?')">Удалить рецепт</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">Рецептов пока нет</div>
+    {% endfor %}
+</div>
+{% endblock %}

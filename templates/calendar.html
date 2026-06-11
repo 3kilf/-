@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Календарь{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Календарь планирования</h2>
+
+<div class="card p-3 mb-4">
+    <h5>Добавить событие</h5>
+    <form id="addEventForm" class="row g-2">
+        <div class="col-md-3">
+            <input type="text" id="eventTitle" class="form-control" placeholder="Название" required>
+        </div>
+        <div class="col-md-2">
+            <select id="eventType" class="form-select">
+                <option value="work_shift">Рабочая смена</option>
+                {% if current_user.is_chief() %}
+                    <option value="rental">Аренда</option>
+                    <option value="masterclass">Мастер-класс</option>
+                {% endif %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="date" id="eventDate" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+            <input type="time" id="eventStart" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+            <input type="time" id="eventEnd" class="form-control" required>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary w-100">OK</button>
+        </div>
+    </form>
+</div>
+
+<div id="calendar"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'ru',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek'
+        },
+        events: '/api/events',
+        editable: false,
+
+        eventClick: function(info) {
+            if (info.event.extendedProps.editable) {
+                if (confirm('Удалить событие "' + info.event.title + '"?')) {
+                    fetch('/api/events/' + info.event.id, { method: 'DELETE' })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                info.event.remove();
+                                alert('Удалено');
+                            } else {
+                                alert('Ошибка: ' + data.error);
+                            }
+                        });
+                }
+            } else {
+                alert('У вас нет прав изменять или удалять это событие.');
+            }
+        }
+    });
+    calendar.render();
+
+    document.getElementById('addEventForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        let start = document.getElementById('eventStart').value;
+        let end = document.getElementById('eventEnd').value;
+        if (start >= end) {
+            alert('Время окончания должно быть позже начала!');
+            return;
+        }
+
+        fetch('/api/events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: document.getElementById('eventTitle').value,
+                type: document.getElementById('eventType').value,
+                date: document.getElementById('eventDate').value,
+                start: start,
+                end: end
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                calendar.refetchEvents();
+                document.getElementById('addEventForm').reset();
+                alert('Добавлено');
+            } else {
+                alert('Ошибка: ' + data.error);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

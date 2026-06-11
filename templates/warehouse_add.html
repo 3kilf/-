@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Добавить товар{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Добавить товар в категорию "{{ category|capitalize }}"</h2>
+
+<div class="card p-4">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {% if category == 'сырье' %}
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control") }}
+            {% elif category in ['духи', 'свечи', 'румы'] %}
+                {{ form.aroma_name.label(class="form-label") }}
+                {{ form.aroma_name(class="form-control") }}
+            {% elif category == 'ароматы' %}
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control") }}
+            {% endif %}
+        </div>
+        
+        {% if category == 'сырье' %}
+        <div class="row">
+            <div class="col-md-3 mb-3">{{ form.quantity_pieces.label(class="form-label") }}{{ form.quantity_pieces(class="form-control") }}</div>
+            <div class="col-md-3 mb-3">{{ form.quantity_units.label(class="form-label") }}{{ form.quantity_units(class="form-control") }}</div>
+            <div class="col-md-3 mb-3">{{ form.arrival_date.label(class="form-label") }}{{ form.arrival_date(class="form-control") }}</div>
+            <div class="col-md-3 mb-3">{{ form.location.label(class="form-label") }}{{ form.location(class="form-control") }}</div>
+        </div>
+        {% elif category in ['духи', 'свечи', 'румы'] %}
+        <div class="row">
+            <div class="col-md-4 mb-3">{{ form.shelf.label(class="form-label") }}{{ form.shelf(class="form-control") }}</div>
+            <div class="col-md-4 mb-3">{{ form.drawer.label(class="form-label") }}{{ form.drawer(class="form-control") }}</div>
+            <div class="col-md-4 mb-3">{{ form.warehouse.label(class="form-label") }}{{ form.warehouse(class="form-control") }}</div>
+        </div>
+        {% elif category == 'ароматы' %}
+        <div class="row">
+            <div class="col-md-6 mb-3">{{ form.in_work.label(class="form-label") }}{{ form.in_work(class="form-control") }}</div>
+            <div class="col-md-6 mb-3">{{ form.warehouse.label(class="form-label") }}{{ form.warehouse(class="form-control") }}</div>
+        </div>
+        {% endif %}
+        
+        <button type="submit" class="btn btn-primary">Добавить</button>
+        <a href="{{ url_for('warehouse') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

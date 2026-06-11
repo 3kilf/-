@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Добавить рецепт{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Добавить новый рецепт</h2>
+
+<form method="POST" class="card p-4">
+    <div class="mb-3">
+        <label class="form-label">Тип продукции</label>
+        <select name="product_type" class="form-select" required>
+            <option value="Рум спрей">Рум спрей</option>
+            <option value="Диффузор">Диффузор</option>
+            <option value="Авто диффузер">Авто диффузер</option>
+            <option value="Свеча контейнерная">Свеча контейнерная</option>
+            <option value="Свеча интерьерная">Свеча интерьерная</option>
+            <option value="Твердые духи">Твердые духи</option>
+            <option value="Аромасаше">Аромасаше</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Масса на 1 единицу (грамм)</label>
+        <input type="number" name="total_weight" class="form-control" value="100" step="0.1" required>
+    </div>
+    
+    <h5>Ингредиенты</h5>
+    <div id="ingredients">
+        <div class="row mb-2 ingredient-row">
+            <div class="col-md-5"><input type="text" name="ingredient_name[]" class="form-control" placeholder="Название ингредиента" required></div>
+            <div class="col-md-3"><input type="number" name="ingredient_grams[]" class="form-control" placeholder="Грамм" step="0.1" required></div>
+            <div class="col-md-3"><input type="number" name="ingredient_percent[]" class="form-control" placeholder="Процент" step="0.1" required></div>
+            <div class="col-md-1"><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove()"></button></div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary btn-sm mb-3" onclick="addIngredient()">+ Добавить ингредиент</button>
+    
+    <button type="submit" class="btn btn-primary">Сохранить рецепт</button>
+    <a href="{{ url_for('recipes') }}" class="btn btn-secondary">Отмена</a>
+</form>
+
+<script>
+function addIngredient() {
+    const div = document.createElement('div');
+    div.className = 'row mb-2 ingredient-row';
+    div.innerHTML = `
+        <div class="col-md-5"><input type="text" name="ingredient_name[]" class="form-control" placeholder="Название ингредиента" required></div>
+        <div class="col-md-3"><input type="number" name="ingredient_grams[]" class="form-control" placeholder="Грамм" step="0.1" required></div>
+        <div class="col-md-3"><input type="number" name="ingredient_percent[]" class="form-control" placeholder="Процент" step="0.1" required></div>
+        <div class="col-md-1"><button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.parentElement.remove()">✕</button></div>
+    `;
+    document.getElementById('ingredients').appendChild(div);
+}
+</script>
+{% endblock %}
