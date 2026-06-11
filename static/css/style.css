@@ -1,0 +1,36 @@
+body {
+    background: #f5f5f5;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table input.form-control-sm {
+    padding: 4px 8px;
+    font-size: 0.9rem;
+}
+
+.alert {
+    margin-top: 10px;
+}
+
+#calendar {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.accordion-button {
+    padding: 1rem 1.5rem;
+}
+
+.accordion-body {
+    padding: 1rem 1.5rem;
+}
